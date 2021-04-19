@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算器</title>
+</head>
+<style>
+    .btn {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        font-size: 30px;
+        text-align: center;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+    }
+
+    .va {
+        height: 35px;
+        font-size: 30px;
+        padding: 1px;
+    }
+
+    .v-container {
+        padding: 10px;
+    }
+
+    .clear {
+        width: 100%;
+        height: 40px;
+        text-align: center;
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        font-size: 30px
+    }
+
+</style>
+<script src="../jquery-3.5.1.min.js"></script>
+<script>
+    var isTypeSelected = 0
+
+    function onBtn(value) {
+        console.log(value)
+        switch (value) {
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '0':
+            case '.':
+                if (isTypeSelected === 0) {
+                    let valueV1 = document.getElementById("v1").innerText;
+                    valueV1 += value;
+                    document.getElementById("v1").innerText = valueV1
+                } else {
+                    let valueV2 = document.getElementById("v2").innerText;
+                    valueV2 += value;
+                    document.getElementById("v2").innerText = valueV2
+                }
+                break
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                isTypeSelected = 1
+                document.getElementById("vtype").innerText = value
+                break
+            case '=':
+                isTypeSelected = 0
+                getResult()
+                break
+        }
+
+    }
+
+    $ = require("../jquery-3.5.1.min")
+
+    function getResult() {
+        let va = document.getElementById("v1").innerText;
+        let vb = document.getElementById("v2").innerText;
+        let url = ""
+        switch (document.getElementById("vtype").innerText) {
+            case "+":
+                url = "http://127.0.0.1:3000/add"
+                break
+            case "-":
+                url = "http://127.0.0.1:3000/sub"
+                break
+            case "*":
+                url = "http://127.0.0.1:3000/multiply"
+                break
+            case "/":
+                url = "http://127.0.0.1:3000/divide"
+                break
+        }
+        $.post(url,
+            {
+                a: va,
+                b: vb
+            },
+            function (data, status) {
+                document.getElementById("vresult").innerText = " = " + data.data;
+            })
+
+    }
+
+    function clearAll() {
+        isTypeSelected = 0
+        document.getElementById("vtype").innerText = ""
+        document.getElementById("v1").innerText = ""
+        document.getElementById("v2").innerText = ""
+        document.getElementById("vresult").innerText = ""
+    }
+</script>
+<body>
+<div style="width: 760px;height: 160px;background: bisque" class="v-container">
+    <div id="v1" class="va"></div>
+    <div id="vtype" class="va"></div>
+    <div id="v2" class="va"></div>
+    <div id="vresult" class="va"></div>
+</div>
+<div class="container">
+    <div class="btn" id="btn_7" onclick="onBtn('7')">7</div>
+    <div class="btn" id="btn_8" onclick="onBtn('8')">8</div>
+    <div class="btn" id="btn_9" onclick="onBtn('9')">9</div>
+    <div class="btn" id="btn_add" onclick="onBtn('+')">+</div>
+    <div class="btn" id="btn_4" onclick="onBtn('4')">4</div>
+    <div class="btn" id="btn_5" onclick="onBtn('5')">5</div>
+    <div class="btn" id="btn_6" onclick="onBtn('6')">6</div>
+    <div class="btn" id="btn_sub" onclick="onBtn('-')">-</div>
+    <div class="btn" id="btn_1" onclick="onBtn('1')">1</div>
+    <div class="btn" id="btn_2" onclick="onBtn('2')">2</div>
+    <div class="btn" id="btn_3" onclick="onBtn('3')">3</div>
+    <div class="btn" id="btn_mul" onclick="onBtn('*')">*</div>
+    <div class="btn" id="btn_0" onclick="onBtn('0')">0</div>
+    <div class="btn" id="btn_point" onclick="onBtn('.')">.</div>
+    <div class="btn" id="btn_d" onclick="onBtn('/')">/</div>
+    <div class="btn" id="btn_post" onclick="onBtn('=')">=</div>
+</div>
+
+<div class="clear" onclick="clearAll()">清除</div>
+
+
+</body>
+</html>
